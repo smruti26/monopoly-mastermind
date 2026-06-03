@@ -27,7 +27,10 @@ function Landing() {
           <div className="size-10 rounded-full bg-gold grid place-items-center text-background font-bold shadow-luxe">M</div>
           <span className="font-display text-xl text-gold">Monopoly Royale</span>
         </div>
-        <Link to="/setup" className="text-sm text-muted-foreground hover:text-gold transition">New Game →</Link>
+        <div className="flex items-center gap-4 text-sm">
+          <Link to="/profile" className="text-muted-foreground hover:text-gold transition">Profile</Link>
+          <Link to="/setup" className="text-muted-foreground hover:text-gold transition">New Game →</Link>
+        </div>
       </nav>
 
       <section className="px-6 md:px-12 pt-16 md:pt-24 pb-24 max-w-6xl mx-auto">
