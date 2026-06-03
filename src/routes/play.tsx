@@ -63,8 +63,8 @@ function Play() {
   }
 
   const space = current ? BOARD[current.position] : null;
-  const canBuy = !current?.isAI && game.phase === "moved" && space && (space.type === "property" || space.type === "railroad" || space.type === "utility")
-    && !game.ownership[space.id] && space.price && current.money >= space.price;
+  const canBuy = !!current && !current.isAI && game.phase === "moved" && !!space && (space.type === "property" || space.type === "railroad" || space.type === "utility")
+    && !game.ownership[space.id] && !!space.price && current.money >= space.price;
   const selSpace = selected !== null ? BOARD[selected] : null;
   const selOwner = selSpace ? game.players.find(p => p.id === game.ownership[selSpace.id]) : null;
 
