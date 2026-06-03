@@ -1,22 +1,16 @@
-// Vercel serverless entry — bridges Node.js req/res to the Web Fetch API
-// handler exported by dist/server/server.js (TanStack Start SSR build).
+// api/server.js — must live at repo ROOT /api/server.js for Vercel to detect it.
+// Bridges Vercel's Node.js req/res to TanStack Start's Web Fetch API handler.
 
-import { createServer } from "node:http";
-import { Readable } from "node:stream";
-
-// Dynamic import so Vercel bundles dist/server at deploy time.
 let _handler;
 async function getHandler() {
   if (!_handler) {
+    // dist/server/server.js is one level up from api/
     const mod = await import("../dist/server/server.js");
     _handler = mod.default ?? mod;
   }
   return _handler;
 }
 
-/**
- * Convert a Node.js IncomingMessage into a Web API Request.
- */
 async function toWebRequest(req) {
   const protocol = req.headers["x-forwarded-proto"] ?? "https";
   const host = req.headers["x-forwarded-host"] ?? req.headers["host"] ?? "localhost";
@@ -45,14 +39,10 @@ async function toWebRequest(req) {
     method: req.method,
     headers,
     body,
-    // @ts-ignore - Node 18+ fetch compat
     duplex: hasBody ? "half" : undefined,
   });
 }
 
-/**
- * Write a Web API Response back to Node.js ServerResponse.
- */
 async function sendWebResponse(webRes, res) {
   res.statusCode = webRes.status;
   for (const [key, value] of webRes.headers.entries()) {
@@ -69,9 +59,6 @@ async function sendWebResponse(webRes, res) {
   res.end();
 }
 
-/**
- * Vercel serverless function handler (Node.js runtime).
- */
 export default async function handler(req, res) {
   try {
     const fetchHandler = await getHandler();
@@ -79,7 +66,7 @@ export default async function handler(req, res) {
     const webResponse = await fetchHandler.fetch(webRequest, {}, {});
     await sendWebResponse(webResponse, res);
   } catch (err) {
-    console.error("[api/server.js] Unhandled error:", err);
+    console.error("[api/server.js] error:", err);
     res.statusCode = 500;
     res.end("Internal Server Error");
   }
