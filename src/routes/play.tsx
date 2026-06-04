@@ -135,7 +135,7 @@ function Play() {
       } else if (e.key.toLowerCase() === "t" && g.phase === "moved") {
         e.preventDefault(); setTradeOpen(true);
       }
-    }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [game, current, canBuy, doRoll, tradeOpen, shortcutsOpen]);
