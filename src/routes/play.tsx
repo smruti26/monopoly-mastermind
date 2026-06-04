@@ -11,7 +11,9 @@ import { Board } from "@/components/game/Board";
 import { Die } from "@/components/game/Die";
 import { TradeModal } from "@/components/game/TradeModal";
 import { EndGameReport } from "@/components/game/EndGameReport";
-import { Dice5, Home, Trophy, X, ArrowRightLeft, Accessibility } from "lucide-react";
+import { ShortcutsOverlay } from "@/components/game/ShortcutsOverlay";
+import { TurnTimer } from "@/components/game/TurnTimer";
+import { Dice5, Home, Trophy, X, ArrowRightLeft, Accessibility, Keyboard } from "lucide-react";
 
 export const Route = createFileRoute("/play")({
   head: () => ({ meta: [
