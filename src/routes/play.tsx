@@ -112,11 +112,18 @@ function Play() {
 
   // Keyboard shortcuts
   useEffect(() => {
-    if (!game || game.winner) return;
+    if (!game) return;
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if (tradeOpen) return;
+      // Global: shortcuts overlay
+      if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setShortcutsOpen((v) => !v);
+        return;
+      }
+      if (tradeOpen || shortcutsOpen) return;
+      if (game.winner) return;
       if (!current || current.isAI) return;
       if ((e.key === " " || e.key.toLowerCase() === "r") && game.phase === "rolling") {
         e.preventDefault(); doRoll();
@@ -130,7 +137,22 @@ function Play() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [game, current, canBuy, doRoll, tradeOpen]);
+  }, [game, current, canBuy, doRoll, tradeOpen, shortcutsOpen]);
+
+  // Per-turn timer expiry — auto-resolve a stalled human turn.
+  const handleTimerExpire = useCallback(() => {
+    if (!game || game.winner) return;
+    const p = game.players[game.currentPlayerIndex];
+    if (!p || p.isAI) return;
+    if (game.phase === "rolling") {
+      const dice = rollDice();
+      setGame(endTurn(applyTurn(game, dice)));
+      announce(`Timer expired — auto-rolled for ${p.name}.`);
+    } else {
+      setGame(endTurn(game));
+      announce(`Timer expired — turn ended for ${p.name}.`);
+    }
+  }, [game, announce]);
 
   if (!game) {
     return (
