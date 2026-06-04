@@ -223,6 +223,17 @@ function Play() {
                 <div className="text-muted-foreground">Turn</div>
                 <div className="font-semibold" style={{ color: current?.color }}>{current?.tokenIcon} {current?.name}</div>
               </div>
+              {current && !current.isAI && !game.winner && (
+                <TurnTimer
+                  turnKey={`${current.id}-${game.turnCount}-${game.phase}`}
+                  duration={45}
+                  warnAt={10}
+                  paused={tradeOpen || shortcutsOpen || rolling}
+                  onExpire={handleTimerExpire}
+                  announce={announce}
+                  label={`${current.name}'s turn`}
+                />
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               {current?.isAI ? (
