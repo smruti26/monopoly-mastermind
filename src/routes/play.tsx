@@ -183,6 +183,16 @@ function Play() {
         <div className="font-display text-gold text-lg sm:text-xl">Monopoly Royale</div>
         <div className="flex items-center gap-2">
           <button
+            ref={shortcutsBtnRef}
+            onClick={() => setShortcutsOpen(true)}
+            aria-label="Show keyboard shortcuts"
+            aria-keyshortcuts="?"
+            className="p-2 rounded-full border border-border hover:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            title="Keyboard shortcuts (?)"
+          >
+            <Keyboard className="size-4" aria-hidden="true" />
+          </button>
+          <button
             onClick={() => setReducedMotion(!profile.reducedMotion)}
             aria-pressed={profile.reducedMotion}
             aria-label={`Reduced motion ${profile.reducedMotion ? "on" : "off"}`}
