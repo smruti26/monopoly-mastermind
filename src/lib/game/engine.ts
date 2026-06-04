@@ -268,6 +268,9 @@ export function executeTrade(state: GameState, offer: TradeOffer): GameState {
 }
 
 // Value a trade from a player's perspective (positive = good for them).
+export function tradeValueFor(state: GameState, playerId: string, offer: TradeOffer): number {
+  return valueFor(state, playerId, offer);
+}
 function valueFor(state: GameState, playerId: string, offer: TradeOffer): number {
   const me = state.players.find((p) => p.id === playerId)!;
   const giving = playerId === offer.fromId;

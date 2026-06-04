@@ -11,7 +11,9 @@ import { Board } from "@/components/game/Board";
 import { Die } from "@/components/game/Die";
 import { TradeModal } from "@/components/game/TradeModal";
 import { EndGameReport } from "@/components/game/EndGameReport";
-import { Dice5, Home, Trophy, X, ArrowRightLeft, Accessibility } from "lucide-react";
+import { ShortcutsOverlay } from "@/components/game/ShortcutsOverlay";
+import { TurnTimer } from "@/components/game/TurnTimer";
+import { Dice5, Home, Trophy, X, ArrowRightLeft, Accessibility, Keyboard } from "lucide-react";
 
 export const Route = createFileRoute("/play")({
   head: () => ({ meta: [
@@ -29,9 +31,11 @@ function Play() {
   const [rolling, setRolling] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [tradeOpen, setTradeOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [finalReport, setFinalReport] = useState<GameReport | null>(null);
   const lastLogRef = useRef<string | null>(null);
+  const shortcutsBtnRef = useRef<HTMLButtonElement>(null);
 
   const current = game?.players[game.currentPlayerIndex];
 
@@ -108,25 +112,48 @@ function Play() {
 
   // Keyboard shortcuts
   useEffect(() => {
-    if (!game || game.winner) return;
-    function onKey(e: KeyboardEvent) {
+    if (!game) return;
+    const g = game;
+    const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if (tradeOpen) return;
+      // Global: shortcuts overlay
+      if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setShortcutsOpen((v) => !v);
+        return;
+      }
+      if (tradeOpen || shortcutsOpen) return;
+      if (g.winner) return;
       if (!current || current.isAI) return;
-      if ((e.key === " " || e.key.toLowerCase() === "r") && game.phase === "rolling") {
+      if ((e.key === " " || e.key.toLowerCase() === "r") && g.phase === "rolling") {
         e.preventDefault(); doRoll();
-      } else if (e.key.toLowerCase() === "e" && game.phase === "moved") {
-        e.preventDefault(); setGame(endTurn(game));
+      } else if (e.key.toLowerCase() === "e" && g.phase === "moved") {
+        e.preventDefault(); setGame(endTurn(g));
       } else if (e.key.toLowerCase() === "b" && canBuy) {
-        e.preventDefault(); setGame(buyProperty(game));
-      } else if (e.key.toLowerCase() === "t" && game.phase === "moved") {
+        e.preventDefault(); setGame(buyProperty(g));
+      } else if (e.key.toLowerCase() === "t" && g.phase === "moved") {
         e.preventDefault(); setTradeOpen(true);
       }
-    }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [game, current, canBuy, doRoll, tradeOpen]);
+  }, [game, current, canBuy, doRoll, tradeOpen, shortcutsOpen]);
+
+  // Per-turn timer expiry — auto-resolve a stalled human turn.
+  const handleTimerExpire = useCallback(() => {
+    if (!game || game.winner) return;
+    const p = game.players[game.currentPlayerIndex];
+    if (!p || p.isAI) return;
+    if (game.phase === "rolling") {
+      const dice = rollDice();
+      setGame(endTurn(applyTurn(game, dice)));
+      announce(`Timer expired — auto-rolled for ${p.name}.`);
+    } else {
+      setGame(endTurn(game));
+      announce(`Timer expired — turn ended for ${p.name}.`);
+    }
+  }, [game, announce]);
 
   if (!game) {
     return (
@@ -155,6 +182,16 @@ function Play() {
         </Link>
         <div className="font-display text-gold text-lg sm:text-xl">Monopoly Royale</div>
         <div className="flex items-center gap-2">
+          <button
+            ref={shortcutsBtnRef}
+            onClick={() => setShortcutsOpen(true)}
+            aria-label="Show keyboard shortcuts"
+            aria-keyshortcuts="?"
+            className="p-2 rounded-full border border-border hover:border-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            title="Keyboard shortcuts (?)"
+          >
+            <Keyboard className="size-4" aria-hidden="true" />
+          </button>
           <button
             onClick={() => setReducedMotion(!profile.reducedMotion)}
             aria-pressed={profile.reducedMotion}
@@ -186,6 +223,17 @@ function Play() {
                 <div className="text-muted-foreground">Turn</div>
                 <div className="font-semibold" style={{ color: current?.color }}>{current?.tokenIcon} {current?.name}</div>
               </div>
+              {current && !current.isAI && !game.winner && (
+                <TurnTimer
+                  turnKey={`${current.id}-${game.turnCount}-${game.phase}`}
+                  duration={45}
+                  warnAt={10}
+                  paused={tradeOpen || shortcutsOpen || rolling}
+                  onExpire={handleTimerExpire}
+                  announce={announce}
+                  label={`${current.name}'s turn`}
+                />
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               {current?.isAI ? (
@@ -301,6 +349,12 @@ function Play() {
           announce={announce}
         />
       )}
+
+      <ShortcutsOverlay
+        open={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+        returnFocusTo={shortcutsBtnRef.current}
+      />
 
       {game.winner && finalReport && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-background/85 backdrop-blur p-4" role="dialog" aria-modal="true" aria-labelledby="winner-title">
