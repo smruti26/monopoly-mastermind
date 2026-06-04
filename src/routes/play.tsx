@@ -124,15 +124,15 @@ function Play() {
         return;
       }
       if (tradeOpen || shortcutsOpen) return;
-      if (game.winner) return;
+      if (g.winner) return;
       if (!current || current.isAI) return;
-      if ((e.key === " " || e.key.toLowerCase() === "r") && game.phase === "rolling") {
+      if ((e.key === " " || e.key.toLowerCase() === "r") && g.phase === "rolling") {
         e.preventDefault(); doRoll();
-      } else if (e.key.toLowerCase() === "e" && game.phase === "moved") {
-        e.preventDefault(); setGame(endTurn(game));
+      } else if (e.key.toLowerCase() === "e" && g.phase === "moved") {
+        e.preventDefault(); setGame(endTurn(g));
       } else if (e.key.toLowerCase() === "b" && canBuy) {
-        e.preventDefault(); setGame(buyProperty(game));
-      } else if (e.key.toLowerCase() === "t" && game.phase === "moved") {
+        e.preventDefault(); setGame(buyProperty(g));
+      } else if (e.key.toLowerCase() === "t" && g.phase === "moved") {
         e.preventDefault(); setTradeOpen(true);
       }
     }
