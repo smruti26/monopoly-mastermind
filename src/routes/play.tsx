@@ -350,6 +350,12 @@ function Play() {
         />
       )}
 
+      <ShortcutsOverlay
+        open={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+        returnFocusTo={shortcutsBtnRef.current}
+      />
+
       {game.winner && finalReport && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-background/85 backdrop-blur p-4" role="dialog" aria-modal="true" aria-labelledby="winner-title">
           <div className="bg-card border border-gold rounded-3xl shadow-luxe w-full max-w-2xl max-h-[90vh] overflow-y-auto">
