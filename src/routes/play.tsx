@@ -31,9 +31,11 @@ function Play() {
   const [rolling, setRolling] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [tradeOpen, setTradeOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [finalReport, setFinalReport] = useState<GameReport | null>(null);
   const lastLogRef = useRef<string | null>(null);
+  const shortcutsBtnRef = useRef<HTMLButtonElement>(null);
 
   const current = game?.players[game.currentPlayerIndex];
 
