@@ -234,7 +234,7 @@ function Play() {
                   turnKey={`${current.id}-${game.turnCount}-${game.phase}`}
                   duration={45}
                   warnAt={10}
-                  paused={tradeOpen || shortcutsOpen || rolling}
+                  paused={shortcutsOpen || rolling}
                   onExpire={handleTimerExpire}
                   announce={announce}
                   label={`${current.name}'s turn`}
