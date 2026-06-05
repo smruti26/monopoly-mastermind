@@ -140,20 +140,26 @@ function Play() {
     return () => window.removeEventListener("keydown", onKey);
   }, [game, current, canBuy, doRoll, tradeOpen, shortcutsOpen]);
 
-  // Per-turn timer expiry — auto-resolve a stalled human turn.
+  // Per-turn timer expiry — deterministic fallback so play never stalls.
   const handleTimerExpire = useCallback(() => {
     if (!game || game.winner) return;
     const p = game.players[game.currentPlayerIndex];
     if (!p || p.isAI) return;
+    // Auto-decline any open trade negotiation.
+    if (tradeOpen) {
+      setTradeOpen(false);
+      announce(`Timer expired — trade auto-declined for ${p.name}.`);
+    }
     if (game.phase === "rolling") {
       const dice = rollDice();
       setGame(endTurn(applyTurn(game, dice)));
-      announce(`Timer expired — auto-rolled for ${p.name}.`);
+      announce(`Timer expired — auto-rolled and ended turn for ${p.name}.`);
     } else {
+      // "moved" phase: skip optional buy, end turn.
       setGame(endTurn(game));
-      announce(`Timer expired — turn ended for ${p.name}.`);
+      announce(`Timer expired — turn auto-ended for ${p.name}.`);
     }
-  }, [game, announce]);
+  }, [game, announce, tradeOpen]);
 
   if (!game) {
     return (
@@ -228,7 +234,7 @@ function Play() {
                   turnKey={`${current.id}-${game.turnCount}-${game.phase}`}
                   duration={45}
                   warnAt={10}
-                  paused={tradeOpen || shortcutsOpen || rolling}
+                  paused={shortcutsOpen || rolling}
                   onExpire={handleTimerExpire}
                   announce={announce}
                   label={`${current.name}'s turn`}
