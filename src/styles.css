@@ -82,8 +82,32 @@
 @utility bg-gold { background-color: var(--gold); }
 @utility bg-felt {
   background:
-    repeating-linear-gradient(45deg, rgba(0,0,0,0.04) 0 2px, transparent 2px 6px),
-    color-mix(in oklab, var(--emerald) 40%, var(--background));
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.06), transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(0,0,0,0.35), transparent 60%),
+    repeating-conic-gradient(from 0deg at 50% 50%, rgba(0,0,0,0.03) 0deg 2deg, transparent 2deg 4deg),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 5px),
+    linear-gradient(160deg, color-mix(in oklab, var(--emerald) 55%, #052e1f), color-mix(in oklab, var(--emerald) 30%, #021a12));
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,0.55),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+@utility tile-emboss {
+  background: linear-gradient(180deg, oklch(0.99 0.01 90) 0%, oklch(0.94 0.02 90) 100%);
+  color: #1a1a1a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.12),
+    0 1px 2px rgba(0,0,0,0.35);
+}
+@utility die-3d {
+  background:
+    radial-gradient(circle at 30% 25%, #ffffff, #e8e8ea 55%, #c9c9cf 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,0.95),
+    inset 0 -3px 4px rgba(0,0,0,0.18),
+    0 6px 14px rgba(0,0,0,0.45),
+    0 2px 4px rgba(0,0,0,0.3);
 }
 
 @utility shadow-luxe {

@@ -15,13 +15,25 @@ export function Die({ value, rolling, label }: Props) {
     <div
       role="img"
       aria-label={label ?? `Die showing ${value}`}
-      className={`size-14 sm:size-16 rounded-xl bg-gradient-to-br from-white to-zinc-200 text-black shadow-luxe p-2 ${rolling && !reduced ? "animate-dice" : ""}`}
+      className={`size-14 sm:size-16 rounded-2xl die-3d text-black p-2.5 ${rolling && !reduced ? "animate-dice" : ""}`}
     >
       <div className="grid grid-cols-3 grid-rows-3 gap-0.5 w-full h-full">
         {Array.from({length: 9}).map((_, i) => {
           const r = Math.floor(i/3), c = i%3;
           const on = DOTS[value]?.some(([dr,dc]) => dr===r && dc===c);
-          return <div key={i} className="grid place-items-center">{on && <div className="size-2 sm:size-2.5 rounded-full bg-zinc-900" />}</div>;
+          return (
+            <div key={i} className="grid place-items-center">
+              {on && (
+                <div
+                  className="size-2 sm:size-2.5 rounded-full"
+                  style={{
+                    background: "radial-gradient(circle at 35% 30%, #4a4a52, #0a0a0d 70%)",
+                    boxShadow: "inset 0 1px 1px rgba(255,255,255,0.25), 0 1px 1px rgba(0,0,0,0.4)",
+                  }}
+                />
+              )}
+            </div>
+          );
         })}
       </div>
     </div>
