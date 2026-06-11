@@ -72,8 +72,14 @@ export function Board({ state, selectedSpace, onSelectSpace }: Props) {
                 onClick={() => onSelectSpace(space.id)}
                 aria-label={ariaLabel}
                 aria-pressed={sel}
-                style={{ gridColumn: col, gridRow: row }}
-                className={`group relative tile-emboss border ${sel ? "border-gold ring-2 ring-gold/60 z-10" : "border-black/15"} rounded-[3px] overflow-hidden text-[8px] sm:text-[9px] flex flex-col hover:ring-2 hover:ring-gold/50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:z-10`}
+                style={{
+                  gridColumn: col,
+                  gridRow: row,
+                  background: "linear-gradient(180deg, #fbfaf5 0%, #ece7d8 100%)",
+                  color: "#1a1a1a",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.4)",
+                }}
+                className={`group relative border ${sel ? "border-gold ring-2 ring-gold/70 z-10" : "border-black/20"} rounded-[3px] overflow-hidden text-[8px] sm:text-[9px] flex flex-col hover:ring-2 hover:ring-gold/50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:z-10`}
               >
                 {space.color && (
                   <div
