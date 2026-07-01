@@ -281,6 +281,7 @@ function Play() {
                   >
                     End Turn <kbd className="text-[10px] opacity-70">(E)</kbd>
                   </button>
+                  <CoachPanel game={game} disabled={rolling} />
                 </>
               )}
             </div>
