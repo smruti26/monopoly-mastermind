@@ -132,10 +132,14 @@
 @utility animate-dice { animation: dice-roll 0.8s ease-out; }
 @utility animate-token { animation: token-bounce 1.4s ease-in-out infinite; }
 @utility text-shine {
-  background: linear-gradient(90deg, var(--gold), oklch(0.95 0.1 90), var(--gold));
+  background-image: linear-gradient(90deg, var(--gold), oklch(0.95 0.1 90), var(--gold));
   background-size: 200% auto;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   animation: shine 3s linear infinite;
 }
